@@ -22,7 +22,9 @@ contact.id, name: contact.name, phone: contact.phone }, }; };
 const filterReducer = (state = "", action) => { switch (action.type) { case
 "FILTER_CONTACT": return action.payload; default: return state; } };
 
-##создаем стор import { createStore, combineReducers } from "redux";
+## создаем стор
+
+import { createStore, combineReducers } from "redux";
 
 const rootReducer = combineReducers({ contacts: contactReducer, filter:
 filterReducer });
