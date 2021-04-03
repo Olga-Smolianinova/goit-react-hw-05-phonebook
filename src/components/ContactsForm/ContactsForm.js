@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux'; //для подключения к глобальному store.js
+
+// Data
+import actions from '../../redux/phonebook-actions';
+
+// Styles
 import s from './ContactsForm.module.css';
 
 class ContactsForm extends Component {
@@ -26,8 +32,22 @@ class ContactsForm extends Component {
     event.preventDefault();
     // console.log(this.state);
 
-    //   во время отправки (submit) формы обращаемся к prop onSubmit={this.addContact} для передачи данных из  state (name, number) в App
-    this.props.onSubmit(this.state);
+    // деструктуризация свойств из глобального state и store
+    const { name, number } = this.state;
+    const { contacts, onSubmit } = this.props;
+
+    //  проверка на возможность добавлять контакты, имена которых уже есть в телефонной книге. При попытке выполнить такое действие выводим alert с предупреждением.
+    if (contacts.some(elm => elm.name.toLowerCase() === name.toLowerCase())) {
+      return alert(`${name} is already in contacts`);
+    }
+    if (
+      contacts.some(elm => elm.number.toLowerCase() === number.toLowerCase())
+    ) {
+      return alert(`${number} is already in contacts`);
+    }
+
+    //   во время отправки (submit) формы обращаемся к prop onSubmit для передачи данных из  state (name, number) через mapDispatchToProps
+    onSubmit(this.state);
 
     // вызов reset для очистки  данных формы,
     this.setState({ name: '', number: '' });
@@ -65,7 +85,7 @@ class ContactsForm extends Component {
 
         <button
           type="submit"
-          disabled={!this.state.name || !this.state.number}
+          // disabled={!this.state.name || !this.state.number}
           className={s.formBtn}
         >
           Add Contact
@@ -79,4 +99,12 @@ ContactsForm.propTypes = {
   onSubmit: PropTypes.func.isRequired,
 };
 
-export default ContactsForm;
+const mapStateToProps = state => ({
+  contacts: state.contacts.items,
+});
+
+const mapDispatchToProps = dispatch => ({
+  onSubmit: (name, number) => dispatch(actions.addContact(name, number)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactsForm);

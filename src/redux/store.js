@@ -48,7 +48,7 @@ const store = configureStore({
   // reducer: {}, под капотом уже использует combineReducers  from 'redux' для композиции редьюсеров, то есть совмещать много в один.
   reducer: {
     // тот reducer, который нужен для persist сперва оборачиваем в persistReducer.
-    phonebook: persistReducer(phonebookPersistConfig, phonebookReducer), //Значение - вызов rootReducer c  persistedReducer, для того чтобы записывать какие-либо данные куда-либо, например в local storage
+    contacts: persistReducer(phonebookPersistConfig, phonebookReducer), //Значение - вызов rootReducer c  persistedReducer, для того чтобы записывать какие-либо данные куда-либо, например в local storage
   },
   middleware, //возвращает список default Middlewares (прослоек), к которому добавляем еще logger =  прослойка (middleware) при console.log() отображает action (до и после)
 

@@ -2,6 +2,11 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
+import { connect } from 'react-redux'; //для подключения к глобальному store.js
+
+// Data
+import actions from '../../redux/phonebook-actions';
+
 import s from './ContactList.module.css';
 
 const ContactList = ({ contacts, onDeleteContact }) => {
@@ -35,4 +40,27 @@ ContactList.propTypes = {
   onDeleteContact: PropTypes.func.isRequired,
 };
 
-export default ContactList;
+// вычисляемые свойства для фильтрации. Отфильтровываем те contacts, которые includes то, что мы записали в input Фильтр по имени и в ContactList рендерим не все <ContactList
+//   contacts={contacts}, а только отфильтрованые, т.е.  contacts={getFilteredContacts}/>
+const getFilteredContacts = (allContacts, filter) => {
+  // для чистоты кода выведем filter.toLowerCase() в отдельную переменную
+  const normalizedFilter = filter.toLowerCase();
+
+  return allContacts.filter(
+    ({ name, number }) =>
+      name.toLowerCase().includes(normalizedFilter) ||
+      number.toLowerCase().includes(normalizedFilter),
+  );
+};
+
+const mapStateToProps = ({ contacts: { items, filter } }) => ({
+  // phonebook: имя ключа для state в store.js
+  // для отображения по фильтру
+  contacts: getFilteredContacts(items, filter),
+});
+
+const mapDispatchToProps = dispatch => ({
+  onDeleteContact: id => dispatch(actions.deleteContact(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactList);
